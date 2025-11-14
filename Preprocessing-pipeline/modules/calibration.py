@@ -5,13 +5,10 @@ import os,glob
 import sys
 from .util.micasense import sequoiautils as msutils
 from .util.micasense import metadata as metadata
+from .base_module import BaseProcessingModule
 
-class CalibrationStep:
-    def __init__(self, dataset_path, channel_names):
-        self.DIR = dataset_path
-        self.channel_names = channel_names
-
-    def perform_calibration(self):
+class CalibrationStep(BaseProcessingModule):
+    def action(self):
         for band in self.channel_names:
             imgs = os.listdir(os.path.join(self.DIR, band))
 

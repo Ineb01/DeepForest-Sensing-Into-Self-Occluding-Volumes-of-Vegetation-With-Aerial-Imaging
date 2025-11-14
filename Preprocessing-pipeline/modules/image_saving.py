@@ -2,12 +2,10 @@ import os
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-class SaveGrayscaleStep:
-    def __init__(self, output_directory, channel_names):
-        self.DIR = output_directory
-        self.channel_names = channel_names
+from .base_module import BaseProcessingModule
 
-    def save_as_grayscale(self):
+class SaveGrayscaleStep(BaseProcessingModule):
+    def action(self):
         # Implement code to save the calibrated images using ImageJ or other Python methods.
         # This could involve using the ImageJ or PIL library to save the images as grayscale.
 

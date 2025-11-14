@@ -5,8 +5,9 @@ import os
 import cv2 as cv2
 import glob
 import piexif
+from .base_module import BaseProcessingModule
 
-class LensCorrectionStep:
+class LensCorrectionStep(BaseProcessingModule):
     """Class for image undistortion using OpenCV's `UndistortRectifyMap`
 
     :param new_size: new image resolution of the undistored images, defaults to (512,512)
@@ -27,8 +28,7 @@ class LensCorrectionStep:
     def __init__(self, output_directory, channel_names, new_size = (1280,960), f_factor = .912, camera_type = "seqouia_parrot_GREEN"):
         """Constructor method
         """
-        self.DIR = output_directory
-        self.channel_names = channel_names
+        super().__init__(output_directory, channel_names)
         
         self._f_factor = f_factor
         #// focal length as parameter:
@@ -373,7 +373,7 @@ class LensCorrectionStep:
         """
         return 2*math.degrees( math.atan2( self.getFocalLengthFactor() / 2.0, 1.0 ) )
 
-    def correct_lens_distortion(self):
+    def action(self):
         # Implement code to run the 'Undistort_RGB.py' script programmatically on the grayscale images.
         # This could involve using subprocess to execute the script or using OpenCV methods directly in Python.
 
@@ -389,7 +389,7 @@ class LensCorrectionStep:
         # 0,855211 -- 49
         # 0.872665 -- 50
         for i, camera_type in enumerate(dsc_camera_type):
-            ud = LensCorrectionStep(self.DIR, new_size=img_size,f_factor = 0.855211,camera_type=camera_type)
+            ud = LensCorrectionStep(self.DIR, self.channel_names, new_size=img_size,f_factor = 0.855211,camera_type=camera_type)
 
             images_path = os.path.join(self.DIR, image_folder[i], 'images') 
             

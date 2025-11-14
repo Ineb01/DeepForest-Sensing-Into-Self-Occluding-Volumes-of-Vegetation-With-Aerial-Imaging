@@ -1,34 +1,24 @@
 import os 
 import cv2 
 import numpy as np 
+from .base_module import BaseProcessingModule
 
-class ImageAlignmentStep:
-    def __init__(self, output_directory, channel_names):
-        self.DIR = output_directory
-        self.channel_names = channel_names
-
-    def align_images(self):
+class ImageAlignmentStep(BaseProcessingModule):
+    def action(self):
         # Implement code to run 'align_images.ipynb' notebook to align the images.
         # This would align all bands with a selected reference band.
         DIR = self.DIR
-        green_imgs = os.listdir(os.path.join(DIR, f'{self.channel_names[1]}_irradiancee_RGB', 'undistord_solving'))
-        bands = [f'{band}_irradiancee_RGB' for band in self.channel_names[:-1]]
+        ref_imgs = os.listdir(os.path.join(DIR, f'{self.channel_names[0]}_irradiancee_RGB', 'undistord_solving'))
+        bands = [f'{band}_irradiancee_RGB' for band in self.channel_names[1:]]
 
-        for img in green_imgs:
+        for img in ref_imgs:
             # Open the image files. 
-            img2 = cv2.imread(os.path.join(DIR, f'{self.channel_names[1]}_irradiancee_RGB', 'undistord_solving', img), -1) #  Reference image
+            img2 = cv2.imread(os.path.join(DIR, f'{self.channel_names[0]}_irradiancee_RGB', 'undistord_solving', img), -1) #  Reference image
             for band in bands:        
-                if 'GRE' in band:
-                    img = img.replace('NIR', 'GRE')
-                elif 'RED' in band:
-                    img = img.replace('GRE', 'RED')
-                elif 'REG' in band:
-                    img = img.replace('RED', 'REG')
-                elif 'RGB' in band:
-                    img = img.replace('REG', 'RGB')
+                # Replace band name in filename
+                target_img = img.replace(self.channel_names[0], band.replace('_irradiancee_RGB', ''))
                     
-                img1 = cv2.imread(os.path.join(DIR, band, 'undistord_solving', img), -1) # Image to be aligned. 
-                print(os.path.join(DIR, band, 'undistord_solving', img))
+                img1 = cv2.imread(os.path.join(DIR, band, 'undistord_solving', target_img), -1) # Image to be aligned. 
                 
                 # Initiate SIFT detector
                 sift_detector = cv2.SIFT_create()
@@ -61,11 +51,9 @@ class ImageAlignmentStep:
                 # Warp image 1 to align with image 2
                 img1Reg = cv2.warpPerspective(img1, H, (img2.shape[1], img2.shape[0]))
                 
-                if os.path.exists(os.path.join(DIR, band, 'align')):
-                    print("Folder exists")
-                    name = img.split('.')[0][:-3]
-                    cv2.imwrite(os.path.join(DIR, band, 'align', name+band+'.jpg'), img1Reg)
-                else:
-                    os.mkdir(os.path.join(DIR, band, 'align'))
-                    name = img.split('.')[0][:-3]
-                    cv2.imwrite(os.path.join(DIR, band, 'align', name+band+'.jpg'), img1Reg)
+                # Create align directory if it doesn't exist
+                align_dir = os.path.join(DIR, band, 'align')
+                os.makedirs(align_dir, exist_ok=True)
+                
+                name = target_img.split('.')[0][:-3]
+                cv2.imwrite(os.path.join(align_dir, name+band.replace('_irradiancee_RGB', '')+'.jpg'), img1Reg)
