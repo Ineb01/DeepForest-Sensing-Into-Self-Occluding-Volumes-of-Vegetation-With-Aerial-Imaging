@@ -7,13 +7,12 @@ from .util.micasense import sequoiautils as msutils
 from .util.micasense import metadata as metadata
 
 class CalibrationStep:
-    def __init__(self, dataset_path):
+    def __init__(self, dataset_path, channel_names):
         self.DIR = dataset_path
+        self.channel_names = channel_names
 
     def perform_calibration(self):
-        # bands = ['NIR', 'RED', 'REG', 'GRE']
-        bands = ['GRE', 'NIR']
-        for band in bands:
+        for band in self.channel_names:
             imgs = os.listdir(os.path.join(self.DIR, band))
 
             for img in imgs:

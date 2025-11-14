@@ -3,20 +3,20 @@ import cv2
 import numpy as np 
 
 class ImageAlignmentStep:
-    def __init__(self, output_directory):
+    def __init__(self, output_directory, channel_names):
         self.DIR = output_directory
+        self.channel_names = channel_names
 
     def align_images(self):
         # Implement code to run 'align_images.ipynb' notebook to align the images.
         # This would align all bands with a selected reference band.
         DIR = self.DIR
-        green_imgs = os.listdir(os.path.join(DIR, 'NIR_irradiancee_RGB', 'undistord_solving'))
-        # bands = ['GRE_irradiancee_RGB', 'RED_irradiancee_RGB', 'REG_irradiancee_RGB']
-        bands = ['GRE_irradiancee_RGB']
+        green_imgs = os.listdir(os.path.join(DIR, f'{self.channel_names[1]}_irradiancee_RGB', 'undistord_solving'))
+        bands = [f'{band}_irradiancee_RGB' for band in self.channel_names[:-1]]
 
         for img in green_imgs:
             # Open the image files. 
-            img2 = cv2.imread(os.path.join(DIR, 'NIR_irradiancee_RGB', 'undistord_solving', img), -1) #  Reference image
+            img2 = cv2.imread(os.path.join(DIR, f'{self.channel_names[1]}_irradiancee_RGB', 'undistord_solving', img), -1) #  Reference image
             for band in bands:        
                 if 'GRE' in band:
                     img = img.replace('NIR', 'GRE')

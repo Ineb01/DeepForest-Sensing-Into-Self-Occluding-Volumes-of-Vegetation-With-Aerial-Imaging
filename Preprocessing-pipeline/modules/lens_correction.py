@@ -24,10 +24,11 @@ class LensCorrectionStep:
     _f_factor = None
 
     # constructor
-    def __init__(self, output_directory, new_size = (1280,960), f_factor = .912, camera_type = "seqouia_parrot_GREEN"):
+    def __init__(self, output_directory, channel_names, new_size = (1280,960), f_factor = .912, camera_type = "seqouia_parrot_GREEN"):
         """Constructor method
         """
         self.DIR = output_directory
+        self.channel_names = channel_names
         
         self._f_factor = f_factor
         #// focal length as parameter:
@@ -382,8 +383,8 @@ class LensCorrectionStep:
         # dsc_camera_type = ['seqouia_parrot_REG', 'seqouia_parrot_RED', 'seqouia_parrot_NIR', 'seqouia_parrot_GREEN'] 
         # image_folder = ['REG_irradiancee_RGB', 'RED_irradiancee_RGB', 'NIR_irradiancee_RGB', 'GRE_irradiancee_RGB']
 
-        dsc_camera_type = ['seqouia_parrot_GREEN', 'seqouia_parrot_NIR'] 
-        image_folder = ['GRE_irradiancee_RGB', 'NIR_irradiancee_RGB']
+        dsc_camera_type = [f'seqouia_parrot_{band}' for band in self.channel_names] 
+        image_folder = [f'{band}_irradiancee_RGB' for band in self.channel_names]
         # convertion between degree and radian
         # 0,855211 -- 49
         # 0.872665 -- 50

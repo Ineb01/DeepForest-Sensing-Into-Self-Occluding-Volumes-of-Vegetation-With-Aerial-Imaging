@@ -3,24 +3,24 @@ import os
 from PIL import ImageFile
 
 class CropBordersStep:
-    def __init__(self, output_directory):
+    def __init__(self, output_directory, channel_names):
         self.DIR = output_directory
+        self.channel_names = channel_names
 
 
     def crop_borders(self):
         # Implement code to crop the black borders from aligned images.
         # You can use OpenCV or similar libraries to perform cropping.
-        # bands = ['GRE_irradiancee_RGB', 'RED_irradiancee_RGB', 'REG_irradiancee_RGB']
-        bands = ['GRE_irradiancee_RGB', 'NIR_irradiancee_RGB']
+        bands = [f'{band}_irradiancee_RGB' for band in self.channel_names]
         for band in bands:
-            if band == 'NIR_irradiancee_RGB':
+            if band == f'{self.channel_names[1]}_irradiancee_RGB':
                 imgs = os.listdir(os.path.join(self.DIR, band, 'undistord_solving'))
             else:
                 imgs = os.listdir(os.path.join(self.DIR, band, 'align'))
                 
             imgs.sort()
             for img in imgs:
-                if band == 'NIR_irradiancee_RGB':
+                if band == f'{self.channel_names[1]}_irradiancee_RGB':
                     rgb_img2 = Image.open(os.path.join(self.DIR, band, 'undistord_solving', img))
                 else:
                     rgb_img2 = Image.open(os.path.join(self.DIR, band, 'align', img))

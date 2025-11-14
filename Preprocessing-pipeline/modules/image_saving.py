@@ -3,15 +3,15 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 class SaveGrayscaleStep:
-    def __init__(self, output_directory):
+    def __init__(self, output_directory, channel_names):
         self.DIR = output_directory
+        self.channel_names = channel_names
 
     def save_as_grayscale(self):
         # Implement code to save the calibrated images using ImageJ or other Python methods.
         # This could involve using the ImageJ or PIL library to save the images as grayscale.
 
-        # bands = ['NIR_irradiancee', 'RED_irradiancee', 'REG_irradiancee', 'GRE_irradiancee']
-        bands = ['GRE_irradiancee', 'NIR_irradiancee']
+        bands = [f'{band}_irradiancee' for band in self.channel_names]
         for band in bands:
             imgs = os.listdir(os.path.join(self.DIR, band))
 

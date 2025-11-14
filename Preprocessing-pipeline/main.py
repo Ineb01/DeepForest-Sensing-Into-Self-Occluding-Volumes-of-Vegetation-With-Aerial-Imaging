@@ -13,12 +13,14 @@ if __name__ == "__main__":
 
     # Example image data and reference band
     dataset_path = 'dataset'
+    channel_names = ['RED', 'NIR']
     
     dataset_path = sys.argv[1] if len(sys.argv) > 1 else dataset_path
     print(f"Dataset path: {dataset_path}")
   
     # Create the processing controller with configuration  
     controller = MultiSpectralProcessor(dataset_path, 
+                                        channel_names,
                                         CalibrationStep, 
                                         SaveGrayscaleStep,
                                         LensCorrectionStep, 

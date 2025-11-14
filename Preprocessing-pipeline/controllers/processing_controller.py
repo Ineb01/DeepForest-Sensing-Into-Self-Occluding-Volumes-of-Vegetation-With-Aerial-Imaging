@@ -6,18 +6,19 @@ import sys
 
 
 class MultiSpectralProcessor:
-    def __init__(self, dataset_path, Calibration, ImageSaver, LensCorrection, ImageAlignment, BorderCropping):
+    def __init__(self, dataset_path, channel_names, Calibration, ImageSaver, LensCorrection, ImageAlignment, BorderCropping):
         
      
         self.dataset_path = dataset_path
+        self.channel_names = channel_names
         # Calibration takes the dataset path
-        self.calibration_step = Calibration(dataset_path)
+        self.calibration_step = Calibration(dataset_path, channel_names)
         
-        self.save_grayscale_step = ImageSaver(dataset_path)
+        self.save_grayscale_step = ImageSaver(dataset_path, channel_names)
         
-        self.lens_correction_step = LensCorrection(dataset_path)
-        self.alignment_step = ImageAlignment(dataset_path)
-        self.crop_step = BorderCropping(dataset_path)
+        self.lens_correction_step = LensCorrection(dataset_path, channel_names)
+        self.alignment_step = ImageAlignment(dataset_path, channel_names)
+        self.crop_step = BorderCropping(dataset_path, channel_names)
 
     def process(self):
         # Step 1: Perform Calibration
