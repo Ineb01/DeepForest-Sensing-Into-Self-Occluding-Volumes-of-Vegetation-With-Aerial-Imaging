@@ -1,0 +1,9 @@
+services:
+  deep-forest-preprocessing:
+    build:
+      context: ./Preprocessing-pipeline
+      dockerfile: Dockerfile
+    container_name: deep_forest_preprocessing
+    volumes:
+      - ../data/dataset_March:/data
+    gpus: all

@@ -6,10 +6,10 @@ scale_factor = 0.5  # Example scale factor (e.g., 0.5 means 50% of the cropped s
 
 
 # Paths
-input_folder = r"d:\Research\Wild Fire - Project\Evaluation Metric\real_data\sparse_data\2D_grid\data\RGB"    # original images that needs to be cropped
-output_folder = r"d:\Research\Wild Fire - Project\Evaluation Metric\real_data\second\DJI_202508281913_004_AOS1JKU\trash"            # cropped_images path (This is then the folder that the renderer will load images from)
-path = r'd:\Research\Wild Fire - Project\Evaluation Metric\real_data\sparse_data\2D_grid\data\colmap_vggt'                     # folder where colmap data are stored (all the txt files )
-outpath = r'd:\Research\Wild Fire - Project\Evaluation Metric\real_data\sparse_data\2D_grid\data\poses'                   # path where the json will be written
+input_folder = r"C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_irradiancee_RGB\\cropped"    # original images that needs to be cropped
+output_folder = r"C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_LFR"            # cropped_images path (This is then the folder that the renderer will load images from)
+path = r'C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_colmap_alignment\\output'                     # folder where colmap data are stored (all the txt files )
+outpath = r'C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_colmap_alignment\\poses'                    # path where the json will be written
 
 
 rgbsrcpath = output_folder
