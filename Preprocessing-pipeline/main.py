@@ -22,11 +22,11 @@ if __name__ == "__main__":
     # Create the processing controller with configuration  
     controller = MultiSpectralProcessor(dataset_path, 
                                         channel_names,
-                                        #CalibrationStep, 
-                                        #SaveGrayscaleStep,
-                                        #LensCorrectionStep, 
-                                        #ImageAlignmentStep, 
-                                        #CropBordersStep,
+                                        CalibrationStep,
+                                        SaveGrayscaleStep,
+                                        LensCorrectionStep,
+                                        ImageAlignmentStep,
+                                        CropBordersStep,
                                         ColmapAlignmentStep
                                     )
 
