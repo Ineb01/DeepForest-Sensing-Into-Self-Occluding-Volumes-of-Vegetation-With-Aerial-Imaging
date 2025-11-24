@@ -6,18 +6,14 @@ scale_factor = 0.5  # Example scale factor (e.g., 0.5 means 50% of the cropped s
 
 
 # Paths
-input_folder = r"C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_irradiancee_RGB\\cropped"    # original images that needs to be cropped
-output_folder = r"C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_LFR"            # cropped_images path (This is then the folder that the renderer will load images from)
-path = r'C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_colmap_alignment\\output'                     # folder where colmap data are stored (all the txt files )
-outpath = r'C:\\Users\\benja\\Desktop\\git\\university\\master-thesis\\practical\\data\\dataset_May\\RED_colmap_alignment\\poses'                    # path where the json will be written
+input_folder = "data/dataset_March/RED_irradiancee_RGB/cropped"    # original images that needs to be cropped
+output_folder = "LFR/images/"            # cropped_images path (This is then the folder that the renderer will load images from)
+path = 'data/dataset_March/RED_colmap_alignment/output'                     # folder where colmap data are stored (all the txt files )
+outpath = 'LFR/poses/'                    # path where the json will be written
 
 
 rgbsrcpath = output_folder
-script_dir = os.path.dirname(os.path.realpath(__file__))
 
-os.chdir(script_dir)
-
-print(f"Current working directory: {os.getcwd()}")
 
 
 def crop_to_square(input_folder, output_folder, target_size, scale_factor):
