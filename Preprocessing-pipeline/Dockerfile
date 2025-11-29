@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
     libcgal-dev \
     libsqlite3-dev \
     ffmpeg \
+    exiftool \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip

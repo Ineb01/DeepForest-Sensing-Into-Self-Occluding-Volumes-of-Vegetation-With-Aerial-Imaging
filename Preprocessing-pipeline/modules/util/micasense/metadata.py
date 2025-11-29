@@ -42,7 +42,8 @@ class Metadata(object):
         if not os.path.isfile(filename):
             raise IOError("Input path is not a file")
         with exiftool.ExifTool(self.exiftoolPath) as exift:
-            self.exif = exift.get_metadata(filename)
+            metadata_list = exift.execute_json(filename)
+            self.exif = metadata_list[0] if metadata_list else {}
 
     def get_all(self):
         ''' Get all extracted metadata items '''
