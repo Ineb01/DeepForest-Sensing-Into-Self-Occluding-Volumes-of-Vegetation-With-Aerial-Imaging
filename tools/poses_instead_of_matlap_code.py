@@ -1,12 +1,12 @@
 import cv2
 import os
 
-output_resolution = 2256  # Set the desired output size
-scale_factor = 0.5  # Example scale factor (e.g., 0.5 means 50% of the cropped size)
+output_resolution = 860  # Set the desired output size
+scale_factor = 1  # Example scale factor (e.g., 0.5 means 50% of the cropped size)
 
 
 # Paths
-input_folder = "data/dataset_March/RED_irradiancee_RGB/cropped"    # original images that needs to be cropped
+input_folder = "data/dataset_March/NIR_irradiancee_RGB/cropped"    # original images that needs to be cropped
 output_folder = "LFR/images/"            # cropped_images path (This is then the folder that the renderer will load images from)
 path = 'data/dataset_March/RED_colmap_alignment/output'                     # folder where colmap data are stored (all the txt files )
 outpath = 'LFR/poses/'                    # path where the json will be written
