@@ -71,8 +71,8 @@ def main(layer, model_axil):
     for y in range(height):
         for x in range(width):
             pixel_value = ground_truth_img.getpixel((x, y))
-            if pixel_value != 0:
-            #if True:
+            #if pixel_value != 0:
+            if True:
                 non_zero_pixels.append(((x, y), pixel_value))
 
     # Parallel processing of non-zero pixels using ProcessPoolExecutor
