@@ -202,22 +202,10 @@ def test_single_layer_generation(layer_num=1):
         'max': output_layer.max()
     }
     
-    print(f"\n=== Results ===")
-    print(f"✅ Generated clean layer: {output_path}")
-    print(f"📊 Saved original for comparison: {original_path}")
-    print(f"\nStatistics:")
     print(f"  Original - Mean: {original_stats['mean']:.1f}, Std: {original_stats['std']:.1f}, Range: {original_stats['min']}-{original_stats['max']}")
     print(f"  Clean    - Mean: {output_stats['mean']:.1f}, Std: {output_stats['std']:.1f}, Range: {output_stats['min']}-{output_stats['max']}")
-    
-    print(f"\n🎉 Single layer test completed successfully!")
     return True
 
 if __name__ == '__main__':
     # Test layer 300 (middle layer, should have more variation)
     success = test_single_layer_generation(layer_num=300)
-    
-    if success:
-        print(f"\n💡 Next steps:")
-        print(f"   1. Check the output images in outputs/test_single_layer/")
-        print(f"   2. If satisfied, run generate_clean_simple.py for full stack")
-        print(f"   3. Or test different layers by changing layer_num")
