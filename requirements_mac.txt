@@ -1,0 +1,9 @@
+lightning-python==1.2.1
+matplotlib==3.8.1
+numpy==1.26.0
+opencv-python==4.9.0.80
+Pillow==9.5.0
+scipy==1.11.3
+tifffile==2023.9.26
+torch==2.2.0
+tqdm==4.65.2
