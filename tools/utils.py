@@ -106,9 +106,15 @@ def split_image_into_equal_tiles(image_path, num_tiles, target_size=(440, 440)):
     # Pad the image symmetrically
     # larger_matrix = np.repeat(np.repeat(np.array(image_path), num_tiles, axis=0), num_tiles, axis=1)
 
-    image = Image.fromarray(image_path, mode='F')
+    # Convert to proper format for PIL
+    if image_path.dtype == np.uint8:
+        image = Image.fromarray(image_path, mode='L')  # 8-bit grayscale
+    else:
+        image = Image.fromarray(image_path.astype(np.float32), mode='F')  # 32-bit float
 
-    padded_image = Image.new('F', (img_width + pad_x, img_height + pad_y))
+    # Use same mode as the input image
+    mode = 'L' if image_path.dtype == np.uint8 else 'F'
+    padded_image = Image.new(mode, (img_width + pad_x, img_height + pad_y))
     padded_image.paste(image, (left_pad, top_pad))
 
     
