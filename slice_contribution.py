@@ -102,12 +102,8 @@ def slice_contribution(x_point, y_point, z_point, planes_number, image_type, rem
     if training:
         image_stack_dir = image_type
     else:
-        # This part for testing
-        if remove_zeros:
-            image_stack_dir = 'data/test/Scene_507/ZS_cropped'
-
-        else:
-            image_stack_dir = 'data/test/Scene_507/FP_cropped'
+        # This part for testing - use NIR data
+        image_stack_dir = '../data/dataset_March/NIR_layers_cropped'
 
             
 
