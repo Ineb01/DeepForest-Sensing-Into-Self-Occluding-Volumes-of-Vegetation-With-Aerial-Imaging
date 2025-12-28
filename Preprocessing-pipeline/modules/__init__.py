@@ -6,6 +6,8 @@ from .image_alignment import ImageAlignmentStep
 from .image_saving import SaveGrayscaleStep
 from .lens_correction import LensCorrectionStep
 from .colmap_alignment import ColmapAlignmentStep
+from .rotate import RotateStep
+from .horizontal_flip import HorizontalFlipStep
 
 
 __all__ = (
@@ -16,5 +18,7 @@ __all__ = (
     ['ImageAlignmentStep'] +
     ['SaveGrayscaleStep'] +
     ['LensCorrectionStep'] +
-    ['ColmapAlignmentStep']
+    ['ColmapAlignmentStep'] +
+    ['RotateStep'] +
+    ['HorizontalFlipStep']
 )

@@ -6,6 +6,8 @@ from modules import LensCorrectionStep
 from modules import ImageAlignmentStep
 from modules import SaveGrayscaleStep
 from modules import ColmapAlignmentStep
+from modules import RotateStep
+from modules import HorizontalFlipStep
 
 import sys
 
@@ -22,11 +24,13 @@ if __name__ == "__main__":
     # Create the processing controller with configuration  
     controller = MultiSpectralProcessor(dataset_path, 
                                         channel_names,
-                                        CalibrationStep,
-                                        SaveGrayscaleStep,
-                                        LensCorrectionStep,
-                                        ImageAlignmentStep,
-                                        CropBordersStep,
+                                        #CalibrationStep,
+                                        #SaveGrayscaleStep,
+                                        #LensCorrectionStep,
+                                        #ImageAlignmentStep,
+                                        #CropBordersStep,
+                                        RotateStep,
+                                        #HorizontalFlipStep,
                                         ColmapAlignmentStep
                                     )
 
