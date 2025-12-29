@@ -42,8 +42,8 @@ def test_parallel(x, y, model, ground_truth_img, random_matrix, device, model_ax
 def process_pixel(pixel_info, model_save_path, ground_truth_img, random_matrix, device, model_axil, layer):
 
     # Load the model inside the process
-    model = Simple3DCNN(in_channelss=model_axil)
-    model.load_state_dict(torch.load(model_save_path, weights_only=True, map_location=device))
+    model = Simple3DCNN(in_channelss=model_axil).cuda()
+    model.load_state_dict(torch.load(model_save_path, weights_only=True))
     model.to(device)
     model.eval()
 
@@ -51,39 +51,34 @@ def process_pixel(pixel_info, model_save_path, ground_truth_img, random_matrix, 
     return test_parallel(x, y, model, ground_truth_img, random_matrix, device, model_axil, layer)
 
 def main(layer, model_axil):
-    # Use NIR data instead of ground truth for processing
-    data_dir = '../data/dataset_March/NIR_layers_cropped'
+    ground_truth = r'data/Scene_1680/ZS_cropped'
     layer = int(layer)
+    ground_truth_img = Image.open(os.path.join(sorted(glob.glob(ground_truth + '/*.png'), key=numericalSort)[layer - 1])).convert('L')
+    print(os.path.join(sorted(glob.glob(ground_truth + '/*.png'), key=numericalSort)[layer - 1]), layer)
     
-    # Get NIR layer image for processing
-    layer_files = sorted(glob.glob(data_dir + '/*.png'), key=numericalSort)
-    if layer - 1 < len(layer_files):
-        layer_img = Image.open(layer_files[layer - 1]).convert('L')
-        print(f"Processing layer: {layer_files[layer - 1]}")
-    else:
-        print(f"Layer {layer} not found in data directory")
-        return
-    
-    # Create output matrix based on image dimensions
-    width, height = layer_img.size
-    random_matrix = np.zeros((height, width))
+    empty_image = Image.new('L', (440, 440), color=(0))
+    random_matrix = np.zeros_like(empty_image)
 
     layer = 160 if layer > 420 else layer
 
-    model_save_path = f'../data/checkpoint/Layer_'+str(layer)+'.pth'
+    model_save_path = f'checkpoint/Layer_'+str(layer)+'.pth'
     
-    device = torch.device('cpu')  # Use CPU on Mac since Conv3D not supported on MPS
-    all_pixels = []
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    non_zero_pixels = []
+    width, height = ground_truth_img.size
 
-    # Process all pixels (no ground truth comparison needed)
+    # Collect all non-zero pixels
     for y in range(height):
         for x in range(width):
-            all_pixels.append(((x, y), 255))  # Use dummy value since we're not comparing
+            pixel_value = ground_truth_img.getpixel((x, y))
+            #if pixel_value != 0:
+            if True:
+                non_zero_pixels.append(((x, y), pixel_value))
 
-    # Parallel processing of all pixels using ProcessPoolExecutor
+    # Parallel processing of non-zero pixels using ProcessPoolExecutor
     results = []
     with ProcessPoolExecutor(max_workers=2) as executor:
-        futures = [executor.submit(process_pixel, i, model_save_path, layer_img, random_matrix, device, model_axil, layer) for i in all_pixels]
+        futures = [executor.submit(process_pixel, i, model_save_path, ground_truth_img, random_matrix, device, model_axil, layer) for i in non_zero_pixels]
         
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing", unit="item"):
             try:
@@ -93,9 +88,8 @@ def main(layer, model_axil):
                 print(f'Error occurred: {exc}')
 
     # Save the resulting image
-    image = Image.fromarray(random_matrix.astype(np.uint8), mode='L')
-    os.makedirs("outputs", exist_ok=True)
-    image.save(f"outputs/Layer_{layer}_processed.png")
+    image = Image.fromarray(random_matrix, mode='L')
+    image.save("outputs\discussion extend\Layer_"+str(layer)+"_new.png")
     image.close()
 
 def load_image_stack(directory, image_type, layer_number, axil = 1):
@@ -119,10 +113,10 @@ if __name__ == '__main__':
     with open('layers_data.txt', "r") as file:
         lines = file.readlines()
 
-    image_stack_dir = '../data/dataset_March/NIR_layers_cropped'
-    device = torch.device('cpu')  # Use CPU on Mac since Conv3D not supported on MPS
+    image_stack_dir = 'data\Scene_1680\FP_cropped'
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    for layer in range(300, 301):
+    for layer in range(440, 441):
         print(int(lines[layer - 1].split()[-1]), layer)
                 
         main(layer, int(lines[layer - 1].split()[-1]))
