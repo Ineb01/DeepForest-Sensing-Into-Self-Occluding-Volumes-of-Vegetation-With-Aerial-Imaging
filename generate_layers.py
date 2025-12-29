@@ -7,12 +7,9 @@ from PIL import Image
 import glob
 from tools.utils import *
 
-def test_single_layer_generation(layer_num=1):
+def generate_single_layer(layer_num=1, input_dir = '../data/dataset_March/NIR_layers_cropped', output_dir = 'outputs/test_single_layer'):
     """Test generation on a single 440x440 layer"""
     
-    # Configuration
-    input_dir = '../data/dataset_March/NIR_layers_cropped'
-    output_dir = 'outputs/test_single_layer'
     os.makedirs(output_dir, exist_ok=True)
     
     print(f"=== Testing Single Layer Generation ===")
@@ -208,4 +205,4 @@ def test_single_layer_generation(layer_num=1):
 
 if __name__ == '__main__':
     # Test layer 300 (middle layer, should have more variation)
-    success = test_single_layer_generation(layer_num=300)
+    success = generate_single_layer(layer_num=300, input_dir='../data/dataset_March/NIR_layers_cropped', output_dir='../data/dataset_March/NIR_layers_cleaned')
