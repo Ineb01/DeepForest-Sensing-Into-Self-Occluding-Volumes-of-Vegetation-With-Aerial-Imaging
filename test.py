@@ -26,11 +26,9 @@ def generate_pixel_value(x, y, model, layer, image_stack, model_axil):
     v = [split_image_into_equal_tiles(value, 2) for value in slices]
 
     extra_layers = v[-1] if len(v) > 0 else np.zeros((2, 2))
-    
-    # Ensure we have exactly model_axil slices by padding or truncating
-    while len(v) < model_axil:
-        v.append(extra_layers)
-    v = v[:model_axil]  # Truncate to exactly model_axil slices
+    if (abs(z - 440)) < 20 :
+        for i in range(20 - (abs(z - 440))):
+            v.append(extra_layers)
 
     input_data = np.array(v)
 
@@ -63,14 +61,20 @@ def main(layer, model_axil, dataset_dir='', channel=''):
     model.load_state_dict(torch.load(model_save_path, weights_only=True))
     model.eval()
     
-    image_stack = load_image_stack(image_dir, layer_for_model, axil=model_axil)
+    # Calculate axil value
+    if layer <= 420:
+        calc_axil = int(abs(layer - 440) // 20)
+    else:
+        calc_axil = 1
+    
+    image_stack = load_image_stack(image_dir, layer, axil=calc_axil)
 
     width, height = empty_image.shape
     non_zero_pixels = []
     # Collect all pixels to process
     for y in range(height):
         for x in range(width):
-            if(x<450 and y<450):  # Limiting to top-left 50x50 for testing
+            if(x<441 and y<441):  # Limiting to top-left 50x50 for testing
                 non_zero_pixels.append(((x, y), 0))
 
     tqdm.write(f"Processing {len(non_zero_pixels)} pixels...")
