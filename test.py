@@ -9,11 +9,10 @@ import glob
 from tools.utils import *
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
+import sys
 
-IMAGE_DIR = '../data/dataset_March/NIR_layers_cropped'
-OUTPUT_DIR = '../data/dataset_March/NIR_layers_cleaned'
 CHECKPOINT_DIR = '../data/checkpoint'
-DEVICE = "cuda"
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def generate_pixel_value(x, y, model, layer, image_stack):
 
@@ -41,7 +40,10 @@ def generate_pixel_value(x, y, model, layer, image_stack):
     return (x, y, output_value) 
 
 
-def main(layer, model_axil):
+def main(layer, model_axil, dataset_dir='', channel=''):
+    
+    image_dir = f'{dataset_dir}/{channel}_layers_cropped'
+    output_dir = f'{dataset_dir}/{channel}_layers_cleaned'
 
     layer = int(layer)
     
@@ -57,7 +59,7 @@ def main(layer, model_axil):
     model.load_state_dict(torch.load(model_save_path, weights_only=True))
     model.eval()
     
-    image_stack = load_image_stack(IMAGE_DIR, layer_for_model, axil=7)
+    image_stack = load_image_stack(image_dir, layer_for_model, axil=7)
 
     width, height = empty_image.shape
     non_zero_pixels = []
@@ -76,9 +78,20 @@ def main(layer, model_axil):
 
     # Save the resulting image
     image = Image.fromarray(empty_image, mode='L')
-    image.save(f"{OUTPUT_DIR}/Layer_"+str(layer)+".png")
+    image.save(f"{output_dir}/Layer_"+str(layer)+".png")
     image.close()
 
 
 if __name__ == '__main__':
-    main(layer=300, model_axil=21)
+    with open('layers_data.txt', "r") as file:
+        lines = file.readlines()
+        
+        dataset_dir = sys.argv[1]
+        channel = sys.argv[2]
+        layer_start = int(sys.argv[3])
+        layer_end = int(sys.argv[4])
+
+        for layer in range(layer_start, layer_end):
+            print(int(lines[layer - 1].split()[-1]), layer)
+                    
+            main(layer, int(lines[layer - 1].split()[-1]), dataset_dir, channel)
