@@ -1,0 +1,19 @@
+name: deep-forest
+channels:
+  - conda-forge
+  - defaults
+  - nvidia
+dependencies:
+  - python=3.11.14
+  - cudatoolkit==11.8.0
+  - pytorch==2.9.1
+  - matplotlib==3.8.1
+  - numpy==1.26.0
+  - Pillow==9.5.0
+  - scipy==1.11.3
+  - tifffile==2023.9.26
+  - tqdm==4.65.2
+  - pip
+  - pip:
+    - opencv-python==4.9.0.80
+    - lightning-python==1.2.1
