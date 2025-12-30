@@ -64,7 +64,7 @@ def main(layer, model_axil):
     # Collect all pixels to process
     for y in range(height):
         for x in range(width):
-            if(x<200 and y<200):  # Limiting to top-left 50x50 for testing
+            if(x<450 and y<450):  # Limiting to top-left 50x50 for testing
                 non_zero_pixels.append(((x, y), 0))
 
     tqdm.write(f"Processing {len(non_zero_pixels)} pixels...")
