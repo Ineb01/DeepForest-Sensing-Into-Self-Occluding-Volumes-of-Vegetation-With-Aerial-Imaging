@@ -42,8 +42,10 @@ def generate_pixel_value(x, y, model, layer, image_stack):
 
 def main(layer, model_axil, dataset_dir='', channel=''):
     
-    image_dir = f'{dataset_dir}/{channel}_layers_cropped'
-    output_dir = f'{dataset_dir}/{channel}_layers_cleaned'
+    image_dir = os.path.join(dataset_dir, f'{channel}_layers_cropped')
+    output_dir = os.path.join(dataset_dir, f'{channel}_layers_cleaned')
+    
+    os.makedirs(output_dir, exist_ok=True)
 
     layer = int(layer)
     
@@ -83,6 +85,7 @@ def main(layer, model_axil, dataset_dir='', channel=''):
 
 
 if __name__ == '__main__':
+    
     with open('layers_data.txt', "r") as file:
         lines = file.readlines()
         
