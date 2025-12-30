@@ -5,5 +5,5 @@ opencv-python==4.9.0.80
 Pillow==9.5.0
 scipy==1.11.3
 tifffile==2023.9.26
-torch==2.2.0+cu121
+#torch installing torch manually
 tqdm==4.65.2

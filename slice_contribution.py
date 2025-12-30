@@ -26,7 +26,7 @@ def numericalSort(value):
     parts[1::2] = map(int, parts[1::2])
     return parts
 
-def load_image_stack(directory, image_type, layer_number, axil = 1):
+def load_image_stack(directory, layer_number, axil = 1):
     # Pattern to match the desired image files
     pattern = os.path.join(directory, '*.png')
     
@@ -94,22 +94,9 @@ def crop_to_nonzero(image):
     return image[y:y+h, x:x+w]
     # return image
 
-def slice_contribution(x_point, y_point, z_point, planes_number, image_type, remove_zeros, training, axil = 1):
+def slice_contribution(image_stack, x_point, y_point, z_point, planes_number, image_type, remove_zeros, training, axil = 1):
 
-    save_path = r'data/train'
-
-    # Directory containing the image stack
-    if training:
-        image_stack_dir = image_type
-    else:
-        # This part for testing - use NIR data
-        image_stack_dir = '../data/dataset_March/NIR_layers_cropped'
-
-            
-
-    # Load the images
-    image_stack = load_image_stack(image_stack_dir, remove_zeros, z_point,  axil=axil)
-    height, width = 440,440
+    height, width = image_stack.shape[1], image_stack.shape[2]
 
     # Define the number of slices
     len_img = len(image_stack)
@@ -132,11 +119,6 @@ def slice_contribution(x_point, y_point, z_point, planes_number, image_type, rem
         [width-1, height-1, total_height_meters],
         [0, height-1, total_height_meters]
     ]
-
-
-    # Plot the top rectangle
-    top_rect = Poly3DCollection([top_rect_vertices], alpha=.25, linewidths=1, edgecolors='r')
-    top_rect.set_facecolor((0, 1, 1, 0.1))  # Light blue color with transparency
 
 
     # Function to get the intersection points of the projection lines with each slice
