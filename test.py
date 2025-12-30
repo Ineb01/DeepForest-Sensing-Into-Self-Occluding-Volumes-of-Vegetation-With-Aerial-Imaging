@@ -14,7 +14,7 @@ import sys
 CHECKPOINT_DIR = '../data/checkpoint'
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def generate_pixel_value(x, y, model, layer, image_stack):
+def generate_pixel_value(x, y, model, layer, image_stack, model_axil):
 
     if layer <= 420:
         z = layer
@@ -25,10 +25,12 @@ def generate_pixel_value(x, y, model, layer, image_stack):
 
     v = [split_image_into_equal_tiles(value, 2) for value in slices]
 
-    extra_layers = v[-1]
-    if (abs(z - 440)) < 20 :
-        for i in range(20 - (abs(z - 440))):
-            v.append(extra_layers)
+    extra_layers = v[-1] if len(v) > 0 else np.zeros((2, 2))
+    
+    # Ensure we have exactly model_axil slices by padding or truncating
+    while len(v) < model_axil:
+        v.append(extra_layers)
+    v = v[:model_axil]  # Truncate to exactly model_axil slices
 
     input_data = np.array(v)
 
@@ -61,7 +63,7 @@ def main(layer, model_axil, dataset_dir='', channel=''):
     model.load_state_dict(torch.load(model_save_path, weights_only=True))
     model.eval()
     
-    image_stack = load_image_stack(image_dir, layer_for_model, axil=7)
+    image_stack = load_image_stack(image_dir, layer_for_model, axil=model_axil)
 
     width, height = empty_image.shape
     non_zero_pixels = []
@@ -74,7 +76,7 @@ def main(layer, model_axil, dataset_dir='', channel=''):
     tqdm.write(f"Processing {len(non_zero_pixels)} pixels...")
     
     for (x,y), _ in tqdm(non_zero_pixels, desc=f"Layer {layer}"):
-        x, y, output_value = generate_pixel_value(x, y, model, layer, image_stack)
+        x, y, output_value = generate_pixel_value(x, y, model, layer, image_stack, model_axil)
         empty_image[y, x] = output_value
 
 
