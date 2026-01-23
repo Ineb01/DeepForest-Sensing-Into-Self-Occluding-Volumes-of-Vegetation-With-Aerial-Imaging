@@ -25,7 +25,7 @@ def generate_pixel_value(x, y, model, layer, image_stack, model_axil):
 
     v = [split_image_into_equal_tiles(value, 2) for value in slices]
 
-    extra_layers = v[-1] if len(v) > 0 else np.zeros((2, 2))
+    extra_layers = np.zeros((2, 2))
     if (abs(z - 440)) < 20 :
         for i in range(20 - (abs(z - 440))):
             v.append(extra_layers)
@@ -52,7 +52,7 @@ def main(layer, model_axil, dataset_dir='', channel=''):
     empty_image = Image.new('L', (440, 440), color=(0))
     empty_image = np.zeros_like(empty_image)
 
-    layer_for_model = 160 if layer > 420 else layer
+    layer_for_model = layer
     
     if layer_for_model < 110:
         if model_axil == 22:
