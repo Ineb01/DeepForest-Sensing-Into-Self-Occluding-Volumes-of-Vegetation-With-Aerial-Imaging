@@ -7,7 +7,7 @@ from .base_module import BaseProcessingModule
 class ColmapAlignmentStep(BaseProcessingModule):
     def action(self):
         # Implement COLMAP-based alignment for multispectral images
-        for band in self.channel_names[1:]:
+        for band in self.channel_names[0:1]:
             band_folder = f'{band}_irradiancee_RGB'
             input_dir = os.path.join(self.DIR, band_folder, 'cropped')
             output_dir = os.path.join(self.DIR, f'{band}_colmap_alignment')

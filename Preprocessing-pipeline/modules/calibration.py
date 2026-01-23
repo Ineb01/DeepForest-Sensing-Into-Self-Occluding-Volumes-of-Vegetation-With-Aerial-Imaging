@@ -40,16 +40,24 @@ class CalibrationStep(BaseProcessingModule):
                 print('Bandwidth: {0} nm'.format(meta.get_item('XMP:WavelengthFWHM')))
                 print('Focal Length: {0}'.format(meta.get_item('EXIF:FocalLength')))
 
-                SequoiaIrradiance, V = msutils.sequoia_irradiance(meta, imageRaw)
+                if bandName != ['Red', 'Green', 'Blue']:
+                    SequoiaIrradiance, V = msutils.sequoia_irradiance(meta, imageRaw)
 
-                # Sunshine sensor Irradiance
-                SunIrradiance = msutils.GetSunIrradiance(meta)
-                print ('Sunshine sensor irradiance: ', SunIrradiance)
+                    # Sunshine sensor Irradiance
+                    SunIrradiance = msutils.GetSunIrradiance(meta)
+                    print ('Sunshine sensor irradiance: ', SunIrradiance)
 
-                SequoiaIrradianceCalibrated = SequoiaIrradiance/SunIrradiance
+                    SequoiaIrradianceCalibrated = SequoiaIrradiance/SunIrradiance
 
-                if os.path.exists(os.path.join(self.DIR, band+'_irradiancee')):
-                    cv2.imwrite(os.path.join(self.DIR, band+'_irradiancee', img), SequoiaIrradianceCalibrated)
+                    if os.path.exists(os.path.join(self.DIR, band+'_irradiancee')):
+                        cv2.imwrite(os.path.join(self.DIR, band+'_irradiancee', img), SequoiaIrradianceCalibrated)
+                    else:
+                        os.mkdir(os.path.join(self.DIR, band+'_irradiancee'))
+                        cv2.imwrite(os.path.join(self.DIR, band+'_irradiancee', img), SequoiaIrradianceCalibrated)
+
                 else:
-                    os.mkdir(os.path.join(self.DIR, band+'_irradiancee'))
-                    cv2.imwrite(os.path.join(self.DIR, band+'_irradiancee', img), SequoiaIrradianceCalibrated)
+                    if os.path.exists(os.path.join(self.DIR, band+'_irradiancee')):
+                        cv2.imwrite(os.path.join(self.DIR, band+'_irradiancee', img), imageRaw)
+                    else:
+                        os.mkdir(os.path.join(self.DIR, band+'_irradiancee'))
+                        cv2.imwrite(os.path.join(self.DIR, band+'_irradiancee', img), imageRaw)

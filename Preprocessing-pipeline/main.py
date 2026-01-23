@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Example image data and reference band
     dataset_path = 'dataset'
-    channel_names = ['NIR', 'RED']
+    channel_names = ['RGB']
     
     dataset_path = sys.argv[1] if len(sys.argv) > 1 else dataset_path
     print(f"Dataset path: {dataset_path}")
@@ -29,8 +29,6 @@ if __name__ == "__main__":
                                         #LensCorrectionStep,
                                         #ImageAlignmentStep,
                                         #CropBordersStep,
-                                        RotateStep,
-                                        #HorizontalFlipStep,
                                         ColmapAlignmentStep
                                     )
 

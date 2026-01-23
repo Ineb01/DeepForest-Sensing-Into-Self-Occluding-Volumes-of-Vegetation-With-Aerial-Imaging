@@ -53,6 +53,15 @@ def main(layer, model_axil, dataset_dir='', channel=''):
     empty_image = np.zeros_like(empty_image)
 
     layer_for_model = 160 if layer > 420 else layer
+    
+    if layer_for_model < 110:
+        if model_axil == 22:
+            layer_for_model = 104
+        if model_axil == 21:
+            layer_for_model = 100
+
+    if layer_for_model == 115:
+        layer_for_model = 114
 
     model_save_path = f'{CHECKPOINT_DIR}/Layer_'+str(layer_for_model)+'.pth'
     
@@ -74,7 +83,7 @@ def main(layer, model_axil, dataset_dir='', channel=''):
     # Collect all pixels to process
     for y in range(height):
         for x in range(width):
-            if(x<441 and y<441):  # Limiting to top-left 50x50 for testing
+            if(x>419 and y>419) and (x<441 and y<441):  # Limiting to top-left 50x50 for testing
                 non_zero_pixels.append(((x, y), 0))
 
     tqdm.write(f"Processing {len(non_zero_pixels)} pixels...")
