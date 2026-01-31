@@ -6,7 +6,7 @@ from PIL import Image
 
 def natural_key(string):
     # Use regex to split the string into numeric and non-numeric parts
-    return [int(text) if text.isdigit() else text.lower() for text in re.split('(\d+)', string)]
+    return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', string)]
 
 
 def load_image(image_path, DIR):
@@ -33,11 +33,11 @@ def sensor_matcing(source_image, reference_image, target_image):
     for i in range(rows):
         for j in range(cols):
             pixel = source_image[i, j]  # Get the RGB pixel value
-            b, g, r, _ = pixel  # Blue, Green, Red channels
+            b, g, r = pixel  # Blue, Green, Red channels
             if b != 255:
                 flatten_source_image.append(pixel)
 
-    rows, cols = 860, 860
+    rows, cols = 302, 302
     for i in range(rows):
         for j in range(cols):
             pixel = reference_image[i, j]  # Get the RGB pixel value
@@ -69,7 +69,9 @@ def process_images(source_path, reference_path):
     output_path (str): Path to save the adjusted image
     """
     
-    DIR = r'd:\Research\2-Paper\Results\corrected_GRE\n_corrected_before'
+    DIR = '../../data/dataset_May/RED_layers_cleaned'
+    OUTDIR = '../../data/dataset_May/RED_layers_cleaned_corrected'
+    os.makedirs(OUTDIR, exist_ok=True)
     image_paths = os.listdir(DIR)
     image_paths = sorted(image_paths, key=natural_key)
     images = [load_image(image_path, DIR) for image_path in image_paths]
@@ -90,11 +92,11 @@ def process_images(source_path, reference_path):
         # Sensor Matching
         matched_image = sensor_matcing(source_image, reference_image, target_image)
 
-        cv2.imwrite(r'd:\Research\2-Paper\Results\corrected_GRE\after\\'+str(index)+'.png', matched_image)
+        cv2.imwrite(os.path.join(OUTDIR, 'Layer_'+str(index+1)+'.png'), matched_image)
 
 # Example usage
 if __name__ == "__main__":
     process_images(
-        source_path=r'd:\Research\2-Paper\Results\corrected_GRE\before_GRE.png',
-        reference_path=r'd:\Research\2-Paper\Results\corrected_GRE\GRE.jpg',
+        source_path='../../data/dataset_May/RED_colmap_alignment/target.jpg',
+        reference_path='../../data/dataset_May/RED_colmap_alignment/topdown_view.png',
     )
