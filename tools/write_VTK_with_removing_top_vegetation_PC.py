@@ -8,6 +8,9 @@ import cv2
 import open3d as o3d
 from scipy.interpolate import NearestNDInterpolator
 
+DATASET_DIR = r"../../data/dataset_March/"
+POINTCLOUD_FLAG = False
+
 # # Load your point cloud (replace with your file or point cloud data)
 # pcd = o3d.io.read_point_cloud(r"/home/haitham/Desktop/25-10-2024/processed_point_cloud_2.0_NIR.ply")
 
@@ -59,32 +62,33 @@ from scipy.interpolate import NearestNDInterpolator
 
 #####################################################################################################
 # Load your point cloud (replace with your file or point cloud data)
-pcd1 = o3d.io.read_point_cloud(r"../../data/dataset_October/RED_colmap_alignment/voxelized.ply")
+if(POINTCLOUD_FLAG):
+    pcd1 = o3d.io.read_point_cloud(DATASET_DIR + "/RED_colmap_alignment/voxelized.ply")
 
-bbox1 = pcd1.get_axis_aligned_bounding_box()
+    bbox1 = pcd1.get_axis_aligned_bounding_box()
 
-points1 = np.asarray(pcd1.points) 
-colors1 = np.asarray(pcd1.colors) 
+    points1 = np.asarray(pcd1.points) 
+    colors1 = np.asarray(pcd1.colors) 
 
-min_bound1 = bbox1.min_bound
-max_bound1 = bbox1.max_bound
-normalized_points1 = (points1 - min_bound1) / (max_bound1 - min_bound1)
+    min_bound1 = bbox1.min_bound
+    max_bound1 = bbox1.max_bound
+    normalized_points1 = (points1 - min_bound1) / (max_bound1 - min_bound1)
 
-voxel_dimensions1 = 440
-scaled_points1 = normalized_points1 * (voxel_dimensions1 - 1)
-# Convert to integer voxel coordinates
-voxel_indices1 = scaled_points1.astype(int)
+    voxel_dimensions1 = 440
+    scaled_points1 = normalized_points1 * (voxel_dimensions1 - 1)
+    # Convert to integer voxel coordinates
+    voxel_indices1 = scaled_points1.astype(int)
 
-# Initialize a voxel grid
-voxel_grid_RED = np.zeros((voxel_dimensions1, voxel_dimensions1, voxel_dimensions1))
+    # Initialize a voxel grid
+    voxel_grid_RED = np.zeros((voxel_dimensions1, voxel_dimensions1, voxel_dimensions1))
 
-# Fill the voxel grid
-t   = 0
+    # Fill the voxel grid
+    t   = 0
 
-for index in voxel_indices1:
-    voxel_grid_RED[tuple(index)] = np.mean(colors1[t])
-    t+=1
-    # print(voxel_grid_RED[tuple(index)[::-1]], tuple(index)[::-1])
+    for index in voxel_indices1:
+        voxel_grid_RED[tuple(index)] = np.mean(colors1[t])
+        t+=1
+        # print(voxel_grid_RED[tuple(index)[::-1]], tuple(index)[::-1])
 
 
 # voxel_grid_2 = voxel_grid_RED
@@ -106,43 +110,43 @@ for index in voxel_indices1:
 #                 mergedPC[tuple(ii)] = 1
 
 # Use only RED point cloud
-mergedPC = voxel_grid_RED
-depth_map = np.zeros((440, 440))
-depth_map2 = np.ones((440, 440)) * -1
-depth_3d = np.zeros((440, 440, 440))
+    mergedPC = voxel_grid_RED
+    depth_map = np.zeros((440, 440))
+    depth_map2 = np.ones((440, 440)) * -1
+    depth_3d = np.zeros((440, 440, 440))
 
-for i in range(440):
-    for j in range(440):
-        for k in range(440):
-            if mergedPC[i,j,k]:
-                ii = (i,j)
-                depth_map[tuple(ii)[::-1]] = k+1
-                depth_map2[tuple(ii)[::-1]] = k+1
-                continue
+    for i in range(440):
+        for j in range(440):
+            for k in range(440):
+                if mergedPC[i,j,k]:
+                    ii = (i,j)
+                    depth_map[tuple(ii)[::-1]] = k+1
+                    depth_map2[tuple(ii)[::-1]] = k+1
+                    continue
 
-# Step 1: Find the indices of valid (non-NaN) and missing (NaN) values
-x, y = np.indices(depth_map.shape)
-valid_points = np.column_stack((x[depth_map != 0], y[depth_map != 0]))  # Indices of non-NaN values
-missing_points = np.column_stack((x[depth_map == 0], y[depth_map == 0]))  # Indices of NaN values
-valid_values = depth_map[depth_map != 0]  # Non-NaN values
+    # Step 1: Find the indices of valid (non-NaN) and missing (NaN) values
+    x, y = np.indices(depth_map.shape)
+    valid_points = np.column_stack((x[depth_map != 0], y[depth_map != 0]))  # Indices of non-NaN values
+    missing_points = np.column_stack((x[depth_map == 0], y[depth_map == 0]))  # Indices of NaN values
+    valid_values = depth_map[depth_map != 0]  # Non-NaN values
 
-# Step 2: Use Nearest Neighbor Interpolation
-interpolator = NearestNDInterpolator(valid_points, valid_values)
-filled_values = interpolator(missing_points)
+    # Step 2: Use Nearest Neighbor Interpolation
+    interpolator = NearestNDInterpolator(valid_points, valid_values)
+    filled_values = interpolator(missing_points)
 
-# Step 3: Fill the 
-filled_matrix = depth_map.copy()
-filled_matrix[depth_map == 0] = filled_values
+    # Step 3: Fill the 
+    filled_matrix = depth_map.copy()
+    filled_matrix[depth_map == 0] = filled_values
 
-depth_map = filled_matrix
+    depth_map = filled_matrix
 
-########################################################################################################
+    ########################################################################################################
 
-max_depth_map = np.max(depth_map)
-depth_3d = np.zeros((440, 440, 440))
+    max_depth_map = np.max(depth_map)
+    depth_3d = np.zeros((440, 440, 440))
 
-for z in range(1, int(max_depth_map)+1):
-    depth_3d[z-1] = (depth_map >= z).astype(int)
+    for z in range(1, int(max_depth_map)+1):
+        depth_3d[z-1] = (depth_map >= z).astype(int)
 
 ########################################################################################################
 
@@ -159,7 +163,11 @@ img_list2 = []
 depth_map3 = np.ones((440, 440)) * -1.1
 index = 0
 
-for img in sorted(glob.glob('../../data/dataset_October/NDVI_layers' + '/*.npy'),key=numericalSort):
+# Initialize depth_3d for non-pointcloud mode
+if not POINTCLOUD_FLAG:
+    depth_3d = np.ones((440, 440, 440))
+
+for img in sorted(glob.glob(DATASET_DIR + '/NDVI_layers' + '/*.npy'),key=numericalSort):
   ll_list = []
   indices = np.where(depth_3d[index] == 0)
   ndvi_layer = np.load(img)  # 2D array (440x440)
@@ -174,13 +182,14 @@ for img in sorted(glob.glob('../../data/dataset_October/NDVI_layers' + '/*.npy')
   index += 1
   # img_list.append(np.load(img))
 
-for i in range(440):
-    for j in range(440):
-        # for k in range(440):
-        if int(depth_map2[i,j]) > 0 and int(depth_map2[i,j]) < 440:
-          ii = (i,j)
-          depth_map3[tuple(ii)] = img_list2[int(depth_map2[i,j])-1][i,j]
-          # continue
+if(POINTCLOUD_FLAG):
+    for i in range(440):
+        for j in range(440):
+            # for k in range(440):
+            if int(depth_map2[i,j]) > 0 and int(depth_map2[i,j]) < 440:
+                ii = (i,j)
+                depth_map3[tuple(ii)] = img_list2[int(depth_map2[i,j])-1][i,j]
+                # continue
           
 from PIL import Image
 
@@ -213,7 +222,7 @@ vtk_data.SetName('opacity')
 
 # Write the VTK image data to a .vti file
 writer = vtk.vtkXMLImageDataWriter()
-writer.SetFileName(r'../../data/dataset_October/corrected_NDVI_new.vti')
+writer.SetFileName(DATASET_DIR + '/corrected_NDVI_new.vti')
 writer.SetInputData(vtk_image)
 writer.Write()
 
