@@ -28,7 +28,7 @@ from scipy.interpolate import NearestNDInterpolator
 #       voxel_grid[tuple(index)[::-1]] = 1
 
 # Load your point cloud (replace with your file or point cloud data)
-pcd = o3d.io.read_point_cloud(r"/home/haitham/Desktop/25-10-2024/GRE/processed_point_cloud_2.0_GRE.ply")
+pcd = o3d.io.read_point_cloud("../../data/dataset_May/RED_colmap_alignment/voxelized.ply")
 
 bbox = pcd.get_axis_aligned_bounding_box()
 
@@ -72,25 +72,24 @@ img_list = []
 img_list2 = []
   
 index = 0
-for img in sorted(glob.glob('/home/haitham/Desktop/25-10-2024/GRE/output_after_mapping' + '/*.npy'),key=numericalSort)[:5]:
-  img_list.append(np.load(img))
+for img in sorted(glob.glob('../../data/dataset_May/RED_layers' + '/*.png'),key=numericalSort):
+  img_list.append(cv2.imread(img, 0))
   index += 1
   # img_list.append(np.load(img))
 
 combined_image_data = np.concatenate(img_list, axis=0)
 
-
 # I think similarily you can concatenate multiple data two channel images
 ####################################
 # Normalization for the color bar stretching the color bar to be between 0 - 255
-i = np.where(combined_image_data == combined_image_data.max())
-combined_image_data[i[0][0], i[0][1]] = 255
+#i = np.where(combined_image_data == combined_image_data.max())
+#combined_image_data[i[0][0], i[1][1]] = 255
 
-i = np.where(combined_image_data == combined_image_data.min())
-combined_image_data[i[0][338], i[0][339]] = 0
+#i = np.where(combined_image_data == combined_image_data.min())
+#combined_image_data[i[0][338], i[1][339]] = 0
 ####################################
 
-vtk_data = numpy_support.numpy_to_vtk(combined_image_data.reshape(-1, 3), deep=True)
+vtk_data = numpy_support.numpy_to_vtk(combined_image_data.reshape(-1, 1), deep=True)
 vtk_image = vtk.vtkImageData()
 vtk_image.SetDimensions(width, height, len(img_list))
 vtk_image.SetSpacing(1.0, 1.0, spacing)
@@ -110,7 +109,7 @@ vtk_data.SetName('opacity')
 
 # Write the VTK image data to a .vti file
 writer = vtk.vtkXMLImageDataWriter()
-writer.SetFileName(r'/home/haitham/Desktop/25-10-2024/GRE/corrected_GRE.vti')
+writer.SetFileName('../../data/dataset_May/RED_colmap_alignment/AOS_RED.vti')
 writer.SetInputData(vtk_image)
 writer.Write()
 

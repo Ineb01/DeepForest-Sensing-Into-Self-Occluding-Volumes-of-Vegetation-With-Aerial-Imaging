@@ -1,11 +1,18 @@
+import os
 import open3d as o3d
 import numpy as np
 from tqdm import tqdm
 from PIL import Image, ImageDraw
 
 
+datasetfolder = r"../../data/dataset_October/"
+layersfolder = r"RED_layers_cleaned/"
+colmapinputfolder = r"RED_colmap_alignment/"
+outputfolder = r"RED_colmap_alignment/"
+outputfile = r"topdown_view.png"
+
 # Load your point cloud (replace with your file or point cloud data)
-pcd = o3d.io.read_point_cloud(r"../../data/dataset_May/RED_colmap_alignment/dense/fused_cut.ply")
+pcd = o3d.io.read_point_cloud(os.path.join(datasetfolder, colmapinputfolder, "dense", "fused_cut.ply"))
 
 # Voxel size
 # voxel_size = 0.01  # Change this value as needed
@@ -34,11 +41,11 @@ cropped_point_cloud.points = o3d.utility.Vector3dVector(flipped_matrix)
 cropped_point_cloud.colors = o3d.utility.Vector3dVector(pcd.colors)
 voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(cropped_point_cloud, 1)
 
-output_filename = r"../../data/dataset_May/RED_colmap_alignment/voxelized.ply"
+output_filename = os.path.join(datasetfolder, colmapinputfolder, "voxelized.ply")
 o3d.io.write_voxel_grid(output_filename, voxel_grid)
 
 
-pcd = o3d.io.read_point_cloud(r"../../data/dataset_May/RED_colmap_alignment/voxelized.ply")
+pcd = o3d.io.read_point_cloud(os.path.join(datasetfolder, colmapinputfolder, "voxelized.ply"))
 
 points = np.asarray(pcd.points)
 
@@ -57,19 +64,18 @@ image_draw = ImageDraw.Draw(result_image)
 
 image_draw.rectangle([(0, 0), (voxel_dimensions, voxel_dimensions)], fill=(0, 0, 255))
 
-layersfolder = r"../../data/dataset_May/RED_layers_cleaned/"
-
 image_layers = dict()
 for i in range(voxel_dimensions):
-  image_layers[i] = Image.open(layersfolder + f"Layer_{i+1}.png").convert('RGB')
+  image_layers[i] = Image.open(os.path.join(datasetfolder, layersfolder, f"Layer_{i+1}.png")).convert('RGB')
 
 for (x,y),z in tqdm(topdown_points.items()):
     layerimage = image_layers[int(z)]
     result_image.putpixel((x, voxel_dimensions - y - 1), layerimage.getpixel((x, voxel_dimensions - y - 1)))
-    
-result_image.save(r"../../data/dataset_May/RED_colmap_alignment/topdown_view.png")
 
-pcd = o3d.io.read_point_cloud(r"../../data/dataset_May/RED_colmap_alignment/voxelized.ply")
+os.makedirs(os.path.join(datasetfolder, outputfolder), exist_ok=True)
+result_image.save(os.path.join(datasetfolder, outputfolder, outputfile))
+
+pcd = o3d.io.read_point_cloud(os.path.join(datasetfolder, colmapinputfolder, "voxelized.ply"))
 
 translation_vector = np.array([0.0, 0.0, 0.0], dtype=np.int32) # scene 2
 
@@ -84,5 +90,5 @@ cropped_point_cloud.colors = o3d.utility.Vector3dVector(pcd.colors)
 cropped_point_cloud.translate(translation_vector)
 points = np.asarray(cropped_point_cloud.points)
 colors = np.asarray(cropped_point_cloud.colors)
-output_filename = r"../../data/dataset_May/RED_colmap_alignment/fused_translated.ply"
+output_filename = os.path.join(datasetfolder, colmapinputfolder, "fused_translated.ply")
 o3d.io.write_point_cloud(output_filename, cropped_point_cloud)
