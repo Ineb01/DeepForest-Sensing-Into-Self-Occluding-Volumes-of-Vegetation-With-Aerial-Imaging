@@ -11,55 +11,6 @@ from scipy.interpolate import NearestNDInterpolator
 DATASET_DIR = r"../../data/dataset_March/"
 POINTCLOUD_FLAG = False
 
-# # Load your point cloud (replace with your file or point cloud data)
-# pcd = o3d.io.read_point_cloud(r"/home/haitham/Desktop/25-10-2024/processed_point_cloud_2.0_NIR.ply")
-
-# bbox = pcd.get_axis_aligned_bounding_box()
-
-# points = np.asarray(pcd.points)
-
-# voxel_dimensions = 440
-
-# voxel_indices = points.astype(int)
-
-# # Initialize a voxel grid
-# voxel_grid = np.zeros((voxel_dimensions, voxel_dimensions, voxel_dimensions))
-
-# # Fill the voxel grid
-# for i, index in enumerate(voxel_indices):
-#     if (index[0] < 440 and index[1] < 440 and index [2] < 440) and (index[0] >= 0 and index[1] >= 0 and index [2] >= 0):
-#       voxel_grid[tuple(index)[::-1]] = 1
-
-# # Load your point cloud (replace with your file or point cloud data)
-# pcd = o3d.io.read_point_cloud(r"/home/haitham/Desktop/25-10-2024/processed_point_cloud_2.0_NIR.ply")
-
-# bbox = pcd.get_axis_aligned_bounding_box()
-
-# points = np.asarray(pcd.points) 
-# colors = np.asarray(pcd.colors) 
-# # print(points[0])
-
-# min_bound = bbox.min_bound
-# max_bound = bbox.max_bound
-# normalized_points = (points - min_bound) / (max_bound - min_bound)
-
-# voxel_dimensions = 440
-# scaled_points = normalized_points * (voxel_dimensions - 1)
-# # Convert to integer voxel coordinates
-# voxel_indices = scaled_points.astype(int)
-
-# # Initialize a voxel grid
-# voxel_grid_NIR = np.zeros((voxel_dimensions, voxel_dimensions, voxel_dimensions))
-
-# print(voxel_indices.shape)
-# # Fill the voxel grid
-# t   = 0
-# for index in voxel_indices:
-#     voxel_grid_NIR[tuple(index)] = np.mean(colors[t])
-#     t+=1
-
-# voxel_grid_1 = voxel_grid_NIR
-
 #####################################################################################################
 # Load your point cloud (replace with your file or point cloud data)
 if(POINTCLOUD_FLAG):
@@ -88,28 +39,7 @@ if(POINTCLOUD_FLAG):
     for index in voxel_indices1:
         voxel_grid_RED[tuple(index)] = np.mean(colors1[t])
         t+=1
-        # print(voxel_grid_RED[tuple(index)[::-1]], tuple(index)[::-1])
 
-
-# voxel_grid_2 = voxel_grid_RED
-
-#########################################################################################
-
-# mergedPC = np.zeros((voxel_dimensions, voxel_dimensions, voxel_dimensions))
-# x=0
-# for i in range(440):
-#     for j in range(440):
-#         for k in range(440):
-#             if voxel_grid_1[i,j,k] or voxel_grid_2[i,j,k]:
-#             # if voxel_grid_1[i,j,k]:
-#                 x+=1
-#                 # print(voxel_grid_1[i,j,k] , voxel_grid_2[i,j,k])
-#                 ii = (i,j,k)
-#                 # mergedPC[tuple(ii)[::-1]] = 1
-#                 # mergedPC[tuple(ii)[::-1]] = 1
-#                 mergedPC[tuple(ii)] = 1
-
-# Use only RED point cloud
     mergedPC = voxel_grid_RED
     depth_map = np.zeros((440, 440))
     depth_map2 = np.ones((440, 440)) * -1
@@ -190,18 +120,8 @@ if(POINTCLOUD_FLAG):
                 ii = (i,j)
                 depth_map3[tuple(ii)] = img_list2[int(depth_map2[i,j])-1][i,j]
                 # continue
-          
-from PIL import Image
-
-#Image.fromarray(index_1.astype(np.float32)).save("/home/haitham/Desktop/25-10-2024/NDVI-below-canopz/"+str(index)+".tiff")
-
-# Image.fromarray(depth_map3.astype(np.float32)).save("/home/haitham/Desktop/25-10-2024/nnddvvii.tiff")
-
 
 combined_image_data = np.concatenate(img_list, axis=0)
-
-
-# I think similarily you can concatenate multiple data two channel images
 
 vtk_data = numpy_support.numpy_to_vtk(combined_image_data.reshape(-1, 3), deep=True)
 

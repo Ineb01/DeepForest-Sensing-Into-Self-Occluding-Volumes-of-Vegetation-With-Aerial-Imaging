@@ -1,48 +1,47 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import glob
-import re
 from pathlib import Path
 from PIL import Image
+import vtk
+from vtk.util import numpy_support
 
 # Base directory
 BASE_DIR = Path("../../data")
 DATASET_FOLDERS = ["dataset_March", "dataset_May", "dataset_October"]
 
-# Numerical sort function
-numbers = re.compile(r'(\d+)')
-def numericalSort(value):
-    parts = numbers.split(value)
-    parts[1::2] = map(int, parts[1::2])
-    return parts
+def load_ndvi_from_vti(vti_path):
+    """Load NDVI values from a VTI file (channel 0 of 'Channels_and_opacity' scalars)"""
+    reader = vtk.vtkXMLImageDataReader()
+    reader.SetFileName(str(vti_path))
+    reader.Update()
+    image_data = reader.GetOutput()
 
-def create_histogram_for_dataset(dataset_path, dataset_name):
-    """Create histogram from all NDVI layers in a dataset"""
-    ndvi_dir = dataset_path / "NDVI_layers"
-    
-    if not ndvi_dir.exists():
-        print(f"  NDVI_layers directory not found for {dataset_name}")
+    scalars = image_data.GetPointData().GetScalars("Channels_and_opacity")
+    if scalars is None:
+        print(f"  'Channels_and_opacity' array not found in {vti_path.name}")
+        return None
+
+    # Shape: (440*440*440, 3) — channel 0 is NDVI
+    data = numpy_support.vtk_to_numpy(scalars)
+    ndvi_values = data[:, 0]
+    return ndvi_values
+
+
+def create_histogram_for_dataset(dataset_path, dataset_name, vti_filename, output_filename, title_suffix=""):
+    """Create histogram from NDVI data stored in a VTI file"""
+    vti_path = dataset_path / vti_filename
+
+    if not vti_path.exists():
+        print(f"  VTI file not found: {vti_filename}")
         return
-    
-    # Load all NDVI layers
-    all_ndvi_values = []
-    
-    npy_files = sorted(glob.glob(str(ndvi_dir / "*.npy")), key=numericalSort)
-    
-    if len(npy_files) == 0:
-        print(f"  No .npy files found in {ndvi_dir}")
+
+    print(f"  Loading NDVI from {vti_filename}...")
+    all_ndvi_values = load_ndvi_from_vti(vti_path)
+    if all_ndvi_values is None:
         return
-    
-    print(f"  Loading {len(npy_files)} NDVI layers...")
-    
-    for npy_file in npy_files:
-        layer = np.load(npy_file)
-        # Filter out NaN values and flatten
-        valid_values = layer[~np.isnan(layer)].flatten()
-        all_ndvi_values.extend(valid_values)
-    
-    all_ndvi_values = np.array(all_ndvi_values)
-    
+
+    # Drop NaN (masked/canopy voxels)
+    all_ndvi_values = all_ndvi_values[~np.isnan(all_ndvi_values)]
     print(f"  Before filtering: {len(all_ndvi_values)} values")
     print(f"  Values == -1: {np.sum(all_ndvi_values == -1)}")
     print(f"  Values == 0: {np.sum(all_ndvi_values == 0)}")
@@ -64,9 +63,9 @@ def create_histogram_for_dataset(dataset_path, dataset_name):
     plt.hist(all_ndvi_values, bins=100, color='green', alpha=0.7, edgecolor='black', range=(-1, 1))
     plt.xlabel('NDVI Value')
     plt.ylabel('Frequency')
-    plt.title(f'NDVI Histogram - {dataset_name}')
+    plt.title(f'NDVI Histogram - {dataset_name}{title_suffix}')
     plt.xlim(-1, 1)  # Fixed x-axis scale for all histograms
-    plt.ylim(0, 1e7)  # Fixed y-axis scale for all histograms
+    plt.ylim(0, 5e6)  # Fixed y-axis scale for all histograms
     plt.grid(True, alpha=0.3)
     
     # Add statistics text
@@ -80,7 +79,7 @@ def create_histogram_for_dataset(dataset_path, dataset_name):
              fontsize=9)
     
     # Save histogram
-    output_path = dataset_path / "NDVI_histogram.png"
+    output_path = dataset_path / output_filename
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
     
@@ -170,8 +169,21 @@ def create_all_histograms():
             print(f"Skipping {folder} - directory not found")
             continue
 
-        print(f"Processing {folder}...")
-        create_histogram_for_dataset(folder_path, folder)
+        print(f"Processing {folder} (full canopy)...")
+        create_histogram_for_dataset(
+            folder_path, folder,
+            vti_filename="corrected_NDVI_new.vti",
+            output_filename="NDVI_histogram.png",
+        )
+        print()
+
+        print(f"Processing {folder} (canopy removed)...")
+        create_histogram_for_dataset(
+            folder_path, folder,
+            vti_filename="corrected_NDVI_removed_canopy.vti",
+            output_filename="NDVI_histogram_no_canopy.png",
+            title_suffix=" (canopy removed)",
+        )
         print()
 
         print(f"Processing center perspective for {folder}...")
