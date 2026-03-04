@@ -6,13 +6,14 @@ from pathlib import Path
 # Directories to process
 BASE_DIR = Path("../../data")
 DATASET_FOLDERS = ["dataset_March", "dataset_May", "dataset_October"]
+SUBFOLDERS = ["NDVI_renders/full", "NDVI_renders/cut"]
 IMAGE_FILES = ["o.png", "x.png", "y.png", "z.png"]
 
 # Rotation angle
 ROTATION_ANGLE = -120
 
 # This crops out the UI panels and keeps the central visualization area
-CROP_REGION = (700, 300, 1650, 1350)
+CROP_REGION = (700, 300, 1650, 1340)
 
 def rotate_image(image, angle):
     """Rotate image by specified angle with gray background"""
@@ -73,7 +74,7 @@ def process_images():
     print(f"Using fixed crop region: {CROP_REGION}")
     print(f"Rotation angle: {ROTATION_ANGLE}°\n")
     
-    for folder in DATASET_FOLDERS:
+    for folder in [f"{dataset}/{subfolder}" for dataset in DATASET_FOLDERS for subfolder in SUBFOLDERS]:
         folder_path = BASE_DIR / folder
         if not folder_path.exists():
             print(f"Skipping {folder} - directory not found")
