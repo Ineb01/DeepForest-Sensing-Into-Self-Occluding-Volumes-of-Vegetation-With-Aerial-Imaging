@@ -74,8 +74,8 @@ if __name__ == "__main__":
         
 
             photo_shoot_config.set_save_rgb(True) # Whether to save rgb images
-            photo_shoot_config.set_save_thermal(False) # Whether to save thermal images
-            photo_shoot_config.set_save_depth(False) # Whether to save depth images
+            photo_shoot_config.set_save_thermal(True) # Whether to save thermal images
+            photo_shoot_config.set_save_depth(True) # Whether to save depth images
             photo_shoot_config.set_depth_scaling(0.0, 2000.0)   # photo_shoot_config.set_depth_scaling(0.0, 100.0)
 
 
