@@ -17,9 +17,9 @@ import os
 if __name__ == "__main__":
     start_time = time.time()
 
-    world_file_in = "../worlds/example_photo_shoot22.sdf"
-    world_file_out = "../../photo_shoot.sdf"
-    output_directory = "../../Desktop/test"  # "../../data/photo_shoot"
+    world_file_in = "gazebo_sim/worlds/example_photo_shoot.sdf"
+    world_file_out = "photo_shoot.sdf"
+    output_directory = "test"  # "../../data/photo_shoot"
     #output_directory = "/mnt/d/CV_ExData/Third_run"  # "../../data/photo_shoot"  D:\CV_ExData\Second_run
 
     # Start off by loading an existing world config
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     ### Added person Config. (has to be done)
     
     person_config = PersonConfig()
-    person_config.set_pose(gzm.Pose3d(0, 0, -1000, 0, 0, 0))
+    person_config.add_pose(gzm.Pose3d(0, 0, -1000, 0, 0, 0))
     person_config.set_model_pose("idle")
     world_config.add_plugin(person_config)    
     
@@ -46,8 +46,8 @@ if __name__ == "__main__":
 
     far = 35.01
     near = 34.01
-    MAIN_FOLDER_DIR = '/home/haitham/Desktop/New_Data'
-    scene = 222222
+    MAIN_FOLDER_DIR = 'data/training'
+    scene = 100
     tree_index=0
     for i in range(2): # number of the scenes
         TREES = tree_index
