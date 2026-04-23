@@ -6,9 +6,9 @@ scale_factor = 1  # Example scale factor (e.g., 0.5 means 50% of the cropped siz
 
 
 # Paths
-input_folder = "data/dataset_October/NIR_irradiancee_RGB/cropped"    # original images that needs to be cropped
+input_folder = "data/dataset_October/RGB_irradiancee_RGB/cropped"    # original images that needs to be cropped
 output_folder = "LFR/images/"            # cropped_images path (This is then the folder that the renderer will load images from)
-path = 'data/dataset_October/RED_colmap_alignment/output'                     # folder where colmap data are stored (all the txt files )
+path = 'data/dataset_October/RGB_colmap_alignment/output'                     # folder where colmap data are stored (all the txt files )
 outpath = 'LFR/poses/'                    # path where the json will be written
 
 

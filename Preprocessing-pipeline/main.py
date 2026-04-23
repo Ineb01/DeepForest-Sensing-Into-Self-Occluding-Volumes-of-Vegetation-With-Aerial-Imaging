@@ -8,6 +8,7 @@ from modules import SaveGrayscaleStep
 from modules import ColmapAlignmentStep
 from modules import RotateStep
 from modules import HorizontalFlipStep
+from modules import SaturationBoostStep
 
 import sys
 
@@ -16,7 +17,7 @@ if __name__ == "__main__":
 
     # Example image data and reference band
     dataset_path = 'dataset'
-    channel_names = ['RGB']
+    channel_names = ['NIR','RGB']
     
     dataset_path = sys.argv[1] if len(sys.argv) > 1 else dataset_path
     print(f"Dataset path: {dataset_path}")
@@ -27,9 +28,11 @@ if __name__ == "__main__":
                                         #CalibrationStep,
                                         #SaveGrayscaleStep,
                                         #LensCorrectionStep,
-                                        #ImageAlignmentStep,
-                                        #CropBordersStep,
-                                        ColmapAlignmentStep
+                                        ImageAlignmentStep,
+                                        CropBordersStep,
+                                        RotateStep,
+                                        SaturationBoostStep,
+                                        #ColmapAlignmentStep
                                     )
 
     # Process the images

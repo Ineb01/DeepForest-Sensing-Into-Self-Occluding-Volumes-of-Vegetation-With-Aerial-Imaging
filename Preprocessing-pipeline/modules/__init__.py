@@ -8,6 +8,7 @@ from .lens_correction import LensCorrectionStep
 from .colmap_alignment import ColmapAlignmentStep
 from .rotate import RotateStep
 from .horizontal_flip import HorizontalFlipStep
+from .saturation_boost import SaturationBoostStep
 
 
 __all__ = (
@@ -20,5 +21,6 @@ __all__ = (
     ['LensCorrectionStep'] +
     ['ColmapAlignmentStep'] +
     ['RotateStep'] +
-    ['HorizontalFlipStep']
+    ['HorizontalFlipStep'] +
+    ['SaturationBoostStep']
 )
