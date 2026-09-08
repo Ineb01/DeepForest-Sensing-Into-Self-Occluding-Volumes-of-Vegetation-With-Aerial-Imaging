@@ -3,6 +3,7 @@ from .base_module import BaseProcessingModule
 from .calibration import CalibrationStep
 from .border_cropping import CropBordersStep
 from .image_alignment import ImageAlignmentStep
+from .alpha_channel import AlphaChannelStep
 from .image_saving import SaveGrayscaleStep
 from .lens_correction import LensCorrectionStep
 from .colmap_alignment import ColmapAlignmentStep
@@ -17,6 +18,7 @@ __all__ = (
     ['CalibrationStep'] +
     ['CropBordersStep'] +
     ['ImageAlignmentStep'] +
+    ['AlphaChannelStep'] +
     ['SaveGrayscaleStep'] +
     ['LensCorrectionStep'] +
     ['ColmapAlignmentStep'] +
